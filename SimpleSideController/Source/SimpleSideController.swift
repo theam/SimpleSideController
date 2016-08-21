@@ -71,8 +71,10 @@ public class SimpleSideController: UIViewController {
             switch self._state {
             case .front:
                 self.disableTapGesture()
+                self.frontController.view.isUserInteractionEnabled = true
             case .side:
                 self.enablePanGesture()
+                self.frontController.view.isUserInteractionEnabled = false
             default:
                 break
             }
