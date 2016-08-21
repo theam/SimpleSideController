@@ -262,7 +262,6 @@ extension SimpleSideController {
 //MARK: Utilities
 extension SimpleSideController {
     fileprivate func performTransition(to state: Presenting) {
-        print(self.sideContainerView.frame)
         switch state {
         case .front:
             self.view.layoutIfNeeded()
@@ -425,7 +424,7 @@ extension SimpleSideController {
                                       attribute: .trailing,
                                       relatedBy: .equal,
                                       toItem: self.sideContainerView,
-                                      attribute: .leading,
+                                      attribute: .trailing,
                                       multiplier: 1.0,
                                       constant: 0.0)
         NSLayoutConstraint.activate([top, bottom, self.borderWidthConstraint!, side])
