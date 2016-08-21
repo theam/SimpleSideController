@@ -49,6 +49,10 @@ public class SimpleSideController: UIViewController {
 //MARK: Public properties
     public weak var delegate: SimpleSideControllerDelegate?
     
+    public var state: Presenting {
+        return self._state
+    }
+    
     public var border: Border? {
         didSet {
             self.borderView.backgroundColor = (border?.color) ?? .lightGray
@@ -58,9 +62,9 @@ public class SimpleSideController: UIViewController {
     }
     
 //MARK: Private properties
-    fileprivate(set) var state: Presenting {
+    fileprivate(set) var _state: Presenting {
         willSet(newState) {
-            if newState != self.state {
+            if newState != self._state {
                 self.performTransition(to: newState)
                 self.delegate?.sideController(self, willChangeTo: newState)
             }
@@ -69,7 +73,7 @@ public class SimpleSideController: UIViewController {
     
     fileprivate var shadow: Shadow? {
         didSet {
-            if self.state == .side {
+            if self._state == .side {
                 self.sideContainerView.layer.shadowOpacity = Float((self.shadow?.opacity) ?? 0.3)
                 self.sideContainerView.layer.shadowRadius = (self.shadow?.radius) ?? 5.0
                 self.sideContainerView.layer.shadowOffset = CGSize(width: ((self.shadow?.width) ?? 7.0) * (self.view.isRightToLeftLanguage() ? -1.0 : 1.0),
@@ -116,8 +120,8 @@ public class SimpleSideController: UIViewController {
         self.sideContainerWidth = sideContainerWidth
         self.background = background
         
-        self.state = .front
-        
+        self._state = .front
+    
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -135,11 +139,11 @@ public class SimpleSideController: UIViewController {
 //MARK: Public API
 extension SimpleSideController {
     public func showFrontController() {
-        self.state = .front
+        self._state = .front
     }
     
     public func showSideController() {
-        self.state = .side
+        self._state = .side
     }
 }
 
@@ -148,7 +152,7 @@ extension SimpleSideController {
     @objc fileprivate func handlePanGesture(gr: UIPanGestureRecognizer) {
         switch gr.state {
         case .began:
-            self.state = .transitioning
+            self._state = .transitioning
             self.handlePanGestureBegan(with: gr)
         case .changed:
             self.handlePanGestureChanged(with: gr)
@@ -160,7 +164,7 @@ extension SimpleSideController {
     @objc fileprivate func handleTapGesture(gr: UITapGestureRecognizer) {
         guard  !self.sideContainerView.frame.contains(gr.location(in: self.view)) else { return }
         
-        switch self.state {
+        switch self._state {
         case .front:
             self.performTransition(to: .side)
         case .side:
@@ -189,13 +193,13 @@ extension SimpleSideController {
         let xSpeed = self.panPreviousVelocity.x
         
         if xSpeed > SimpleSideController.speedThreshold {
-            self.state = .side
+            self._state = .side
         } else if xSpeed < -SimpleSideController.speedThreshold {
-            self.state = .front
+            self._state = .front
         } else if xSideLocation > self.sideContainerWidth / 2.0 {
-            self.state = .side
+            self._state = .side
         } else {
-            self.state = .front
+            self._state = .front
         }
         
         self.panPreviousLocation = .zero
