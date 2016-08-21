@@ -10,6 +10,9 @@
 		BFBCB4C81D6A48BB0036B461 /* SimpleSideController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFBCB4BE1D6A48BB0036B461 /* SimpleSideController.framework */; };
 		BFBCB4CD1D6A48BB0036B461 /* SimpleSideControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4CC1D6A48BB0036B461 /* SimpleSideControllerTests.swift */; };
 		BFBCB4CF1D6A48BB0036B461 /* SimpleSideController.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBCB4C11D6A48BB0036B461 /* SimpleSideController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFBCB4DC1D6A49020036B461 /* SimpleSideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */; };
+		BFBCB4DD1D6A49020036B461 /* SimpleSideController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */; };
+		BFBCB4DE1D6A49020036B461 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4DB1D6A49020036B461 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +32,9 @@
 		BFBCB4C71D6A48BB0036B461 /* SimpleSideControllerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleSideControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFBCB4CC1D6A48BB0036B461 /* SimpleSideControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSideControllerTests.swift; sourceTree = "<group>"; };
 		BFBCB4CE1D6A48BB0036B461 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleSideController.swift; sourceTree = "<group>"; };
+		BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleSideController.xib; sourceTree = "<group>"; };
+		BFBCB4DB1D6A49020036B461 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +77,7 @@
 		BFBCB4C01D6A48BB0036B461 /* SimpleSideController */ = {
 			isa = PBXGroup;
 			children = (
+				BFBCB4D81D6A48CA0036B461 /* Source */,
 				BFBCB4C11D6A48BB0036B461 /* SimpleSideController.h */,
 				BFBCB4C21D6A48BB0036B461 /* Info.plist */,
 			);
@@ -84,6 +91,16 @@
 				BFBCB4CE1D6A48BB0036B461 /* Info.plist */,
 			);
 			path = SimpleSideControllerTests;
+			sourceTree = "<group>";
+		};
+		BFBCB4D81D6A48CA0036B461 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */,
+				BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */,
+				BFBCB4DB1D6A49020036B461 /* Helpers.swift */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,6 +166,7 @@
 					BFBCB4BD1D6A48BB0036B461 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = NN3A296YV4;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 					BFBCB4C61D6A48BB0036B461 = {
@@ -181,6 +199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFBCB4DD1D6A49020036B461 /* SimpleSideController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +217,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFBCB4DC1D6A49020036B461 /* SimpleSideController.swift in Sources */,
+				BFBCB4DE1D6A49020036B461 /* Helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,6 +343,7 @@
 		BFBCB4D31D6A48BB0036B461 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = NN3A296YV4;
@@ -334,6 +356,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.alessandromartin.SimpleSideController;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -341,6 +364,7 @@
 		BFBCB4D41D6A48BB0036B461 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = NN3A296YV4;
@@ -360,6 +384,7 @@
 		BFBCB4D61D6A48BB0036B461 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = NN3A296YV4;
 				INFOPLIST_FILE = SimpleSideControllerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -372,6 +397,7 @@
 		BFBCB4D71D6A48BB0036B461 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = NN3A296YV4;
 				INFOPLIST_FILE = SimpleSideControllerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
