@@ -64,9 +64,17 @@ public class SimpleSideController: UIViewController {
 //MARK: Private properties
     fileprivate(set) var _state: Presenting {
         willSet(newState) {
-            if newState != self._state {
-                self.performTransition(to: newState)
-                self.delegate?.sideController(self, willChangeTo: newState)
+            self.performTransition(to: newState)
+            self.delegate?.sideController(self, willChangeTo: newState)
+        }
+        didSet {
+            switch self._state {
+            case .front:
+                self.disableTapGesture()
+            case .side:
+                self.enablePanGesture()
+            default:
+                break
             }
         }
     }
@@ -119,7 +127,6 @@ public class SimpleSideController: UIViewController {
         self.sideController = sideController
         self.sideContainerWidth = sideContainerWidth
         self.background = background
-        
         self._state = .front
     
         super.init(nibName: nil, bundle: nil)
@@ -145,10 +152,45 @@ extension SimpleSideController {
     public func showSideController() {
         self._state = .side
     }
+    
+    public func isPanGestureEnabled() -> Bool {
+        return self.panGestureRecognizer?.isEnabled ?? false
+    }
+    
+    public func disablePanGesture() {
+        self.panGestureRecognizer?.isEnabled = false
+    }
+    
+    public func enablePanGesture() {
+        self.panGestureRecognizer?.isEnabled = true
+    }
+    
+    public func isTapGestureEnabled() -> Bool {
+        return self.tapGestureRecognizer?.isEnabled ?? false
+    }
+    
+    public func disableTapGesture() {
+        self.tapGestureRecognizer?.isEnabled = false
+    }
+    
+    public func enableTapGesture() {
+        self.tapGestureRecognizer?.isEnabled = true
+    }
 }
 
 //MARK: Gesture management
 extension SimpleSideController {
+    @objc fileprivate func handleTapGesture(gr: UITapGestureRecognizer) {
+        switch self._state {
+        case .front:
+            self._state = .side
+        case .side:
+            self._state = .front
+        case .transitioning:
+            break
+        }
+    }
+
     @objc fileprivate func handlePanGesture(gr: UIPanGestureRecognizer) {
         switch gr.state {
         case .began:
@@ -158,19 +200,6 @@ extension SimpleSideController {
             self.handlePanGestureChanged(with: gr)
         default:
             self.handlePanGestureEnded(with: gr)
-        }
-    }
-    
-    @objc fileprivate func handleTapGesture(gr: UITapGestureRecognizer) {
-        guard  !self.sideContainerView.frame.contains(gr.location(in: self.view)) else { return }
-        
-        switch self._state {
-        case .front:
-            self.performTransition(to: .side)
-        case .side:
-            self.performTransition(to: .front)
-        case .transitioning:
-        break
         }
     }
     
@@ -216,6 +245,7 @@ extension SimpleSideController {
     fileprivate func setup() {
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gr:)))
         self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(gr:)))
+        self.tapGestureRecognizer?.delegate = self
         self.view.addGestureRecognizer(self.panGestureRecognizer!)
         self.panGestureRecognizer?.maximumNumberOfTouches = 1
         self.view.addGestureRecognizer(self.tapGestureRecognizer!)
@@ -235,27 +265,30 @@ extension SimpleSideController {
         self.view.bringSubview(toFront: self.sideContainerView)
         self.sideContainerView.hideShadow(animation: 0.0)
         
-        ///
         switch self.background {
         case .translucent:
-            self.sideContainerView.backgroundColor = UIColor(white: 1.0, alpha: 0.3)
+            self.sideContainerView.backgroundColor = .clear
             let blurEffect = UIBlurEffect(style: .light)
             self.blurView = UIVisualEffectView(effect: blurEffect)
-            let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect)
-            self.vibrancyView = UIVisualEffectView(effect: vibrancyEffect)
             self.sideContainerView.insertSubview(self.blurView!, at: 0)
             self.pinIntoSideContainer(view: self.blurView!)
             self.addChildViewController(self.sideController)
-            self.vibrancyView?.contentView.addSubview(self.sideController.view)
+            self.blurView?.contentView.addSubview(self.sideController.view)
             self.pinIntoSuperView(view: self.sideController.view)
             self.sideController.didMove(toParentViewController: self)
-            blurView?.contentView.addSubview(vibrancyView!)
         case .opaque(_, _):
             self.addChildViewController(self.sideController)
             self.sideContainerView.addSubview(self.sideController.view)
             self.pinIntoSideContainer(view: self.sideController.view)
             self.sideController.didMove(toParentViewController: self)
         }
+    }
+}
+
+extension SimpleSideController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return gestureRecognizer == self.tapGestureRecognizer &&
+        !self.sideContainerView.frame.contains(touch.location(in: self.view))
     }
 }
 
@@ -274,7 +307,9 @@ extension SimpleSideController {
                            animations: {
                             self.view.layoutIfNeeded()
             }) { finished in
-                self.delegate?.sideController(self, didChangeTo: state)
+                if finished {
+                    self.delegate?.sideController(self, didChangeTo: state)
+                }
             }
         case .side:
             self.view.layoutIfNeeded()
@@ -289,7 +324,9 @@ extension SimpleSideController {
                            animations: {
                             self.view.layoutIfNeeded()
             }) { finished in
-                self.delegate?.sideController(self, didChangeTo: state)
+                if finished {
+                    self.delegate?.sideController(self, didChangeTo: state)
+                }
             }
         case .transitioning:
             break
