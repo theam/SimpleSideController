@@ -11,7 +11,6 @@
 		BFBCB4CD1D6A48BB0036B461 /* SimpleSideControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4CC1D6A48BB0036B461 /* SimpleSideControllerTests.swift */; };
 		BFBCB4CF1D6A48BB0036B461 /* SimpleSideController.h in Headers */ = {isa = PBXBuildFile; fileRef = BFBCB4C11D6A48BB0036B461 /* SimpleSideController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFBCB4DC1D6A49020036B461 /* SimpleSideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */; };
-		BFBCB4DD1D6A49020036B461 /* SimpleSideController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */; };
 		BFBCB4DE1D6A49020036B461 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBCB4DB1D6A49020036B461 /* Helpers.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,7 +32,6 @@
 		BFBCB4CC1D6A48BB0036B461 /* SimpleSideControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSideControllerTests.swift; sourceTree = "<group>"; };
 		BFBCB4CE1D6A48BB0036B461 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleSideController.swift; sourceTree = "<group>"; };
-		BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleSideController.xib; sourceTree = "<group>"; };
 		BFBCB4DB1D6A49020036B461 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				BFBCB4D91D6A49020036B461 /* SimpleSideController.swift */,
-				BFBCB4DA1D6A49020036B461 /* SimpleSideController.xib */,
 				BFBCB4DB1D6A49020036B461 /* Helpers.swift */,
 			);
 			path = Source;
@@ -199,7 +196,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFBCB4DD1D6A49020036B461 /* SimpleSideController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

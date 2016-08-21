@@ -39,12 +39,12 @@ public class SimpleSideController: UIViewController {
     
     static let speedThreshold: CGFloat = 300.0
     
-    @IBOutlet fileprivate weak var sideContainerView: UIView!
-    @IBOutlet fileprivate weak var sideContainerWidthConstraint: NSLayoutConstraint!
-    @IBOutlet fileprivate weak var sideContainerHorizontalConstraint: NSLayoutConstraint!
+    fileprivate let sideContainerView = UIView()
+    fileprivate var sideContainerWidthConstraint: NSLayoutConstraint?
+    fileprivate var sideContainerHorizontalConstraint: NSLayoutConstraint?
     
-    @IBOutlet fileprivate weak var borderView: UIView!
-    @IBOutlet fileprivate weak var borderWidthConstraint: NSLayoutConstraint!
+    fileprivate let borderView = UIView()
+    fileprivate var borderWidthConstraint: NSLayoutConstraint?
     
 //MARK: Public properties
     public weak var delegate: SimpleSideControllerDelegate?
@@ -56,7 +56,7 @@ public class SimpleSideController: UIViewController {
     public var border: Border? {
         didSet {
             self.borderView.backgroundColor = (border?.color) ?? .lightGray
-            self.borderWidthConstraint.constant = (border?.thickness) ?? 1.0
+            self.borderWidthConstraint?.constant = (border?.thickness) ?? 1.0
             self.sideContainerView.layoutIfNeeded()
         }
     }
@@ -179,17 +179,21 @@ extension SimpleSideController {
     }
     
     private func handlePanGestureChanged(with recognizer: UIPanGestureRecognizer) {
+        guard let constraint = self.sideContainerHorizontalConstraint else { return }
+        
         let currentLocation = recognizer.location(in: self.view)
         self.panPreviousVelocity = recognizer.velocity(in: self.view)
-        self.sideContainerHorizontalConstraint.constant += currentLocation.x - self.panPreviousLocation.x
-        self.sideContainerHorizontalConstraint.constant = clamp(lowerBound: 0.0,
-                                                                value: self.sideContainerHorizontalConstraint.constant,
+        self.sideContainerHorizontalConstraint?.constant += currentLocation.x - self.panPreviousLocation.x
+        self.sideContainerHorizontalConstraint?.constant = clamp(lowerBound: 0.0,
+                                                                value: constraint.constant,
                                                                 upperBound: self.sideContainerWidth)
         self.panPreviousLocation = currentLocation
     }
     
     private func handlePanGestureEnded(with recognizer: UIPanGestureRecognizer) {
-        let xSideLocation = self.sideContainerHorizontalConstraint.constant
+        guard let constraint = self.sideContainerHorizontalConstraint else { return }
+        
+        let xSideLocation = constraint.constant
         let xSpeed = self.panPreviousVelocity.x
         
         if xSpeed > SimpleSideController.speedThreshold {
@@ -222,8 +226,12 @@ extension SimpleSideController {
         self.frontController.view.frame = self.view.bounds
         self.frontController.didMove(toParentViewController: self)
         
-        self.sideContainerWidthConstraint.constant = self.sideContainerWidth
-        self.sideContainerHorizontalConstraint.constant = self.initialSideHorizontalPosition
+        self.view.addSubview(self.sideContainerView)
+        self.constrainSideContainerView()
+        
+        self.sideContainerView.addSubview(self.borderView)
+        self.constrainBorderView()
+        
         self.view.bringSubview(toFront: self.sideContainerView)
         self.sideContainerView.hideShadow(animation: 0.0)
         
@@ -254,6 +262,7 @@ extension SimpleSideController {
 //MARK: Utilities
 extension SimpleSideController {
     fileprivate func performTransition(to state: Presenting) {
+        print(self.sideContainerView.frame)
         switch state {
         case .front:
             self.view.layoutIfNeeded()
@@ -354,5 +363,71 @@ extension SimpleSideController {
                                           multiplier: 1.0,
                                           constant: 0.0)
         NSLayoutConstraint.activate([top, bottom, leading, trailing])
+    }
+    
+    fileprivate func constrainSideContainerView() {
+        self.sideContainerView.translatesAutoresizingMaskIntoConstraints = false
+        let height = NSLayoutConstraint(item: self.sideContainerView,
+                                        attribute: .height,
+                                        relatedBy: .equal,
+                                        toItem: self.view,
+                                        attribute: .height,
+                                        multiplier: 1.0,
+                                        constant: 0.0)
+        let centerY = NSLayoutConstraint(item: self.sideContainerView,
+                                         attribute: .centerY,
+                                         relatedBy: .equal,
+                                         toItem: self.view,
+                                         attribute: .centerY,
+                                         multiplier: 1.0,
+                                         constant: 0.0)
+        self.sideContainerWidthConstraint = NSLayoutConstraint(item: self.sideContainerView,
+                                                               attribute: .width,
+                                                               relatedBy: .equal,
+                                                               toItem: nil,
+                                                               attribute: .notAnAttribute,
+                                                               multiplier: 1.0,
+                                                               constant: self.sideContainerWidth)
+        self.sideContainerHorizontalConstraint = NSLayoutConstraint(item: self.sideContainerView,
+                                                                    attribute: .trailing,
+                                                                    relatedBy: .equal,
+                                                                    toItem: self.view,
+                                                                    attribute: .leading,
+                                                                    multiplier: 1.0,
+                                                                    constant: self.initialSideHorizontalPosition)
+        NSLayoutConstraint.activate([height, centerY, self.sideContainerWidthConstraint!, self.sideContainerHorizontalConstraint!])
+    }
+    
+    fileprivate func constrainBorderView() {
+        self.borderView.translatesAutoresizingMaskIntoConstraints = false
+        let top = NSLayoutConstraint(item: self.borderView,
+                                     attribute: .top,
+                                     relatedBy: .equal,
+                                     toItem: self.sideContainerView,
+                                     attribute: .top,
+                                     multiplier: 1.0,
+                                     constant: 0.0)
+        let bottom = NSLayoutConstraint(item: self.borderView,
+                                        attribute: .bottom,
+                                        relatedBy: .equal,
+                                        toItem: self.sideContainerView,
+                                        attribute: .bottom,
+                                        multiplier: 1.0,
+                                        constant: 0.0)
+        self.borderWidthConstraint = NSLayoutConstraint(item: self.borderView,
+                                                        attribute: .width,
+                                                        relatedBy: .equal,
+                                                        toItem: nil,
+                                                        attribute: .notAnAttribute,
+                                                        multiplier: 1.0,
+                                                        constant: 0.0)
+        let side = NSLayoutConstraint(item: self.borderView,
+                                      attribute: .trailing,
+                                      relatedBy: .equal,
+                                      toItem: self.sideContainerView,
+                                      attribute: .leading,
+                                      multiplier: 1.0,
+                                      constant: 0.0)
+        NSLayoutConstraint.activate([top, bottom, self.borderWidthConstraint!, side])
     }
 }
