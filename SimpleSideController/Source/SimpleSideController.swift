@@ -13,6 +13,17 @@ public protocol SimpleSideControllerDelegate: class {
     func sideController(_ sideController: SimpleSideController, didChangeTo state: SimpleSideController.Presenting)
 }
 
+public struct Border {
+    let thickness: CGFloat
+    let color: UIColor
+}
+
+public struct Shadow {
+    let opacity: CGFloat
+    let radius: CGFloat
+    let width: CGFloat
+}
+
 public class SimpleSideController: UIViewController {
     
     public enum Presenting {
@@ -25,18 +36,7 @@ public class SimpleSideController: UIViewController {
         case opaque(UIColor, Shadow?)
         case translucent
     }
-    
-    public struct Border {
-        let thickness: CGFloat
-        let color: UIColor
-    }
-    
-    public struct Shadow {
-        let opacity: CGFloat
-        let radius: CGFloat
-        let width: CGFloat
-    }
-    
+
     static let speedThreshold: CGFloat = 300.0
     
     fileprivate let sideContainerView = UIView()
