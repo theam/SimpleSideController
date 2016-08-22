@@ -45,7 +45,8 @@ public class SimpleSideController: UIViewController {
     
     public enum Background {
         case opaque(color: UIColor, shadow: Shadow?)
-        case translucent(style: UIBlurEffectStyle)
+        case translucent(style: UIBlurEffectStyle, alpha: CGFloat)
+        case vibrant(style: UIBlurEffectStyle, alpha: CGFloat)
     }
     
     static let speedThreshold: CGFloat = 300.0
@@ -109,8 +110,8 @@ public class SimpleSideController: UIViewController {
             case let .opaque(color, shadow):
                 self.sideContainerView.backgroundColor = color
                 self.shadow = shadow
-            case .translucent:
-                self.sideContainerView.backgroundColor = .clear
+            case let .translucent(_, alpha), let .vibrant(_, alpha):
+                self.sideContainerView.backgroundColor = UIColor(white: 1.0, alpha: alpha)
             }
         }
     }
@@ -283,14 +284,28 @@ extension SimpleSideController {
         self.sideContainerView.hideShadow(animation: 0.0)
         
         switch self.background {
-        case let .translucent(style):
-            self.sideContainerView.backgroundColor = .clear
+        case let .translucent(style, alpha):
+            self.sideContainerView.backgroundColor = UIColor(white: 1.0, alpha: alpha)
             let blurEffect = UIBlurEffect(style: style)
             self.blurView = UIVisualEffectView(effect: blurEffect)
             self.sideContainerView.insertSubview(self.blurView!, at: 0)
             self.pinIntoSideContainer(view: self.blurView!)
             self.addChildViewController(self.sideController)
             self.blurView?.contentView.addSubview(self.sideController.view)
+            self.pinIntoSuperView(view: self.sideController.view)
+            self.sideController.didMove(toParentViewController: self)
+        case let .vibrant(style, alpha):
+            self.sideContainerView.backgroundColor = UIColor(white: 1.0, alpha: alpha)
+            let blurEffect = UIBlurEffect(style: style)
+            self.blurView = UIVisualEffectView(effect: blurEffect)
+            let vibrancyEffect = UIVibrancyEffect(blurEffect: blurEffect)
+            self.vibrancyView = UIVisualEffectView(effect: vibrancyEffect)
+            self.sideContainerView.insertSubview(self.blurView!, at: 0)
+            self.pinIntoSideContainer(view: self.blurView!)
+            self.addChildViewController(self.sideController)
+            self.blurView?.contentView.addSubview(self.vibrancyView!)
+            self.pinIntoSuperView(view: self.vibrancyView!)
+            self.vibrancyView?.contentView.addSubview(self.sideController.view)
             self.pinIntoSuperView(view: self.sideController.view)
             self.sideController.didMove(toParentViewController: self)
         case let .opaque(color, shadow):
