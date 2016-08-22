@@ -67,7 +67,7 @@ public class SimpleSideController: UIViewController {
     public var border: Border? {
         didSet {
             self.borderView.backgroundColor = (border?.color) ?? .lightGray
-            self.borderWidthConstraint?.constant = (border?.thickness) ?? 1.0
+            self.borderWidthConstraint?.constant = (border?.thickness) ?? 0.0
             self.sideContainerView.layoutIfNeeded()
         }
     }
@@ -469,7 +469,7 @@ extension SimpleSideController {
                                                         toItem: nil,
                                                         attribute: .notAnAttribute,
                                                         multiplier: 1.0,
-                                                        constant: 0.0)
+                                                        constant: self.border?.thickness ?? 0.0)
         let side = NSLayoutConstraint(item: self.borderView,
                                       attribute: .trailing,
                                       relatedBy: .equal,
