@@ -13,28 +13,6 @@ public protocol SimpleSideControllerDelegate: class {
     func sideController(_ sideController: SimpleSideController, didChangeTo state: SimpleSideController.Presenting)
 }
 
-public struct Border {
-    let thickness: CGFloat
-    let color: UIColor
-    
-    public init(thickness: CGFloat, color: UIColor) {
-        self.thickness = thickness
-        self.color = color
-    }
-}
-
-public struct Shadow {
-    let opacity: CGFloat
-    let radius: CGFloat
-    let width: CGFloat
-    
-    public init(opacity: CGFloat, radius: CGFloat, width: CGFloat) {
-        self.opacity = opacity
-        self.radius = radius
-        self.width = width
-    }
-}
-
 public class SimpleSideController: UIViewController {
     
     public enum Presenting {
@@ -44,10 +22,21 @@ public class SimpleSideController: UIViewController {
     }
     
     public enum Background {
-        case opaque(UIColor, Shadow?)
-        case translucent
+        case opaque(color: UIColor, shadow: Shadow?)
+        case translucent(style: UIBlurEffectStyle)
     }
-
+    
+    public struct Border {
+        let thickness: CGFloat
+        let color: UIColor
+    }
+    
+    public struct Shadow {
+        let opacity: CGFloat
+        let radius: CGFloat
+        let width: CGFloat
+    }
+    
     static let speedThreshold: CGFloat = 300.0
     
     fileprivate let sideContainerView = UIView()
@@ -67,7 +56,7 @@ public class SimpleSideController: UIViewController {
     public var border: Border? {
         didSet {
             self.borderView.backgroundColor = (border?.color) ?? .lightGray
-            self.borderWidthConstraint?.constant = (border?.thickness) ?? 0.0
+            self.borderWidthConstraint?.constant = (border?.thickness) ?? 1.0
             self.sideContainerView.layoutIfNeeded()
         }
     }
@@ -207,6 +196,10 @@ extension SimpleSideController {
     @objc fileprivate func handlePanGesture(gr: UIPanGestureRecognizer) {
         switch gr.state {
         case .began:
+            if let opacity = self.shadow?.opacity, self._state == .front {
+                self.sideContainerView.displayShadow(opacity: opacity)
+            }
+            
             self._state = .transitioning
             self.handlePanGestureBegan(with: gr)
         case .changed:
@@ -279,9 +272,9 @@ extension SimpleSideController {
         self.sideContainerView.hideShadow(animation: 0.0)
         
         switch self.background {
-        case .translucent:
+        case let .translucent(style):
             self.sideContainerView.backgroundColor = .clear
-            let blurEffect = UIBlurEffect(style: .light)
+            let blurEffect = UIBlurEffect(style: style)
             self.blurView = UIVisualEffectView(effect: blurEffect)
             self.sideContainerView.insertSubview(self.blurView!, at: 0)
             self.pinIntoSideContainer(view: self.blurView!)
@@ -289,7 +282,9 @@ extension SimpleSideController {
             self.blurView?.contentView.addSubview(self.sideController.view)
             self.pinIntoSuperView(view: self.sideController.view)
             self.sideController.didMove(toParentViewController: self)
-        case .opaque(_, _):
+        case let .opaque(color, shadow):
+            self.sideController.view.backgroundColor = color
+            self.shadow = shadow
             self.addChildViewController(self.sideController)
             self.sideContainerView.addSubview(self.sideController.view)
             self.pinIntoSideContainer(view: self.sideController.view)
@@ -469,7 +464,7 @@ extension SimpleSideController {
                                                         toItem: nil,
                                                         attribute: .notAnAttribute,
                                                         multiplier: 1.0,
-                                                        constant: self.border?.thickness ?? 0.0)
+                                                        constant: 0.0)
         let side = NSLayoutConstraint(item: self.borderView,
                                       attribute: .trailing,
                                       relatedBy: .equal,
