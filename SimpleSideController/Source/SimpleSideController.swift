@@ -16,12 +16,23 @@ public protocol SimpleSideControllerDelegate: class {
 public struct Border {
     let thickness: CGFloat
     let color: UIColor
+    
+    public init(thickness: CGFloat, color: UIColor) {
+        self.thickness = thickness
+        self.color = color
+    }
 }
 
 public struct Shadow {
     let opacity: CGFloat
     let radius: CGFloat
     let width: CGFloat
+    
+    public init(opacity: CGFloat, radius: CGFloat, width: CGFloat) {
+        self.opacity = opacity
+        self.radius = radius
+        self.width = width
+    }
 }
 
 public class SimpleSideController: UIViewController {
