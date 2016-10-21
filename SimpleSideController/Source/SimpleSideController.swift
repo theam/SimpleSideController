@@ -136,7 +136,7 @@ public class SimpleSideController: UIViewController {
         return isRTL ? UIScreen.main.bounds.width + self.sideContainerWidth : 0.0
     }()
     
-    required public init(frontController: UIViewController, sideController: UIViewController, sideContainerWidth: CGFloat, background: Background) {
+	required public init(frontController: UIViewController, sideController: UIViewController, sideContainerWidth: CGFloat, background: Background) {
         self.frontController = frontController
         self.sideController = sideController
         self.sideContainerWidth = sideContainerWidth
@@ -145,7 +145,19 @@ public class SimpleSideController: UIViewController {
     
         super.init(nibName: nil, bundle: nil)
     }
-    
+	
+	// Objective-C compatible init:
+	public init(frontController: UIViewController, sideController: UIViewController, sideContainerWidth: CGFloat,
+	            backgroundColor: UIColor, blurEffectStyle: UIBlurEffectStyle) {
+		self.frontController = frontController
+		self.sideController = sideController
+		self.sideContainerWidth = sideContainerWidth
+		self.background = .translucent(style: blurEffectStyle, color: backgroundColor)
+		self._state = .front
+
+		super.init(nibName: nil, bundle: nil)
+	}
+	
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
