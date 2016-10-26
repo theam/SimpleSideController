@@ -202,6 +202,10 @@ extension SimpleSideController {
     public func enableTapGesture() {
         self.tapGestureRecognizer?.isEnabled = true
     }
+	
+	@objc public func isSideControllerVisible() -> Bool {
+		return self._state == .side
+	}
 }
 
 //MARK: Gesture management
