@@ -45,8 +45,8 @@ public class SimpleSideController: UIViewController {
     
     public enum Background {
         case opaque(color: UIColor, shadow: Shadow?)
-        case translucent(style: UIBlurEffectStyle, color: UIColor)
-        case vibrant(style: UIBlurEffectStyle, color: UIColor)
+        case translucent(style: UIBlurEffect.Style, color: UIColor)
+        case vibrant(style: UIBlurEffect.Style, color: UIColor)
     }
     
     static let speedThreshold: CGFloat = 300.0
@@ -148,7 +148,7 @@ public class SimpleSideController: UIViewController {
 	
 	// Objective-C compatible init:
 	public init(frontController: UIViewController, sideController: UIViewController, sideContainerWidth: CGFloat,
-	            backgroundColor: UIColor, blurEffectStyle: UIBlurEffectStyle) {
+                backgroundColor: UIColor, blurEffectStyle: UIBlurEffect.Style) {
 		self.frontController = frontController
 		self.sideController = sideController
 		self.sideContainerWidth = sideContainerWidth
@@ -285,10 +285,10 @@ extension SimpleSideController {
         self.view.addGestureRecognizer(self.tapGestureRecognizer!)
         self.tapGestureRecognizer?.isEnabled = false
         
-        self.addChildViewController(self.frontController)
+        self.addChild(self.frontController)
         self.view.addSubview(self.frontController.view)
         self.frontController.view.frame = self.view.bounds
-        self.frontController.didMove(toParentViewController: self)
+        self.frontController.didMove(toParent: self)
         
         self.view.addSubview(self.sideContainerView)
         self.constrainSideContainerView()
@@ -296,7 +296,7 @@ extension SimpleSideController {
         self.sideContainerView.addSubview(self.borderView)
         self.constrainBorderView()
         
-        self.view.bringSubview(toFront: self.sideContainerView)
+        self.view.bringSubviewToFront(self.sideContainerView)
         self.sideContainerView.hideShadow(animation: 0.0)
         
         switch self.background {
@@ -306,10 +306,10 @@ extension SimpleSideController {
             self.blurView = UIVisualEffectView(effect: blurEffect)
             self.sideContainerView.insertSubview(self.blurView!, at: 0)
             self.pinIntoSideContainer(view: self.blurView!)
-            self.addChildViewController(self.sideController)
+            self.addChild(self.sideController)
             self.blurView?.contentView.addSubview(self.sideController.view)
             self.pinIntoSuperView(view: self.sideController.view)
-            self.sideController.didMove(toParentViewController: self)
+            self.sideController.didMove(toParent: self)
         case let .vibrant(style, color):
             self.sideContainerView.backgroundColor = color
             let blurEffect = UIBlurEffect(style: style)
@@ -318,19 +318,19 @@ extension SimpleSideController {
             self.vibrancyView = UIVisualEffectView(effect: vibrancyEffect)
             self.sideContainerView.insertSubview(self.blurView!, at: 0)
             self.pinIntoSideContainer(view: self.blurView!)
-            self.addChildViewController(self.sideController)
+            self.addChild(self.sideController)
             self.blurView?.contentView.addSubview(self.vibrancyView!)
             self.pinIntoSuperView(view: self.vibrancyView!)
             self.vibrancyView?.contentView.addSubview(self.sideController.view)
             self.pinIntoSuperView(view: self.sideController.view)
-            self.sideController.didMove(toParentViewController: self)
+            self.sideController.didMove(toParent: self)
         case let .opaque(color, shadow):
             self.sideController.view.backgroundColor = color
             self.shadow = shadow
-            self.addChildViewController(self.sideController)
+            self.addChild(self.sideController)
             self.sideContainerView.addSubview(self.sideController.view)
             self.pinIntoSideContainer(view: self.sideController.view)
-            self.sideController.didMove(toParentViewController: self)
+            self.sideController.didMove(toParent: self)
         }
     }
 }
